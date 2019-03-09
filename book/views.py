@@ -24,7 +24,8 @@ class ExternalBook(APIView):
         for json_response in list_of_data:
             for field in FIELDS_TO_EXCLUDE:
                 json_response.pop(field)
-            json_response['release_date'] = json_response.pop('released')
+            release = json_response.pop('released').split('T')[0]
+            json_response['release_date'] = release
 
     def get(self, request):
         book_name = request.query_params.get('name', '')
