@@ -44,7 +44,8 @@ class TestBookViewSet:
         factory = APIRequestFactory()
         return factory
 
-    def create_book(self, request_factory):
+    @staticmethod
+    def create_book(request_factory):
         req = request_factory.post('api/v1/books', {
             'name': 'test_from_test',
             'isbn': '123-456789012',
@@ -93,9 +94,8 @@ class TestBookViewSet:
     #     self.create_book(request_factory)
     #     req = request_factory.patch('api/v1/books/1', {"name": "updated_name"}, format='json')
     #     resp = views.BookViewSet.as_view({'patch': 'update'})(req, pk=1)
-    #     print(resp.data)
     #     assert resp.status_code == 200
-    #     assert resp.data['message'] == "The book test_from_test was deleted successfully."
+    #     assert resp.data['message'] == "The book test_from_test was updated successfully."
 
     def test_delete(self, request_factory):
         self.create_book(request_factory)
