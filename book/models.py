@@ -8,7 +8,6 @@ class Author(models.Model):
         return self.name
 
 
-# Create your models here.
 class Book(models.Model):
     name = models.CharField(max_length=256, verbose_name="Book name")
     isbn = models.CharField(max_length=14, verbose_name="Book's ISBN")

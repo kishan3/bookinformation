@@ -1,23 +1,12 @@
 from unittest.mock import patch
 
 import pytest
-from django.test import RequestFactory
-from rest_framework.test import APIRequestFactory
+from rest_framework.test import APIRequestFactory, APIClient
 
 from book import views
+from book.tests.dummy_data import dump
 
 pytestmark = pytest.mark.django_db
-
-dump = [{'url': 'https://www.anapioficeandfire.com/api/books/1', 'name': 'A Game of Thrones', 'isbn': '978-0553103540',
-         'authors': ['George R. R. Martin'], 'numberOfPages': 694, 'publisher': 'Bantam Books',
-         'country': 'United States', 'mediaType': 'Hardcover', 'released': '1996-08-01T00:00:00',
-         'characters': ['https://www.anapioficeandfire.com/api/characters/2',
-                        'https://www.anapioficeandfire.com/api/characters/12',
-                        'https://www.anapioficeandfire.com/api/characters/13'],
-         'povCharacters': ['https://www.anapioficeandfire.com/api/characters/148',
-                           'https://www.anapioficeandfire.com/api/characters/208',
-                           'https://www.anapioficeandfire.com/api/characters/232']},
-        ]
 
 
 class TestExternalBookSearch:
@@ -30,7 +19,7 @@ class TestExternalBookSearch:
     @patch('book.views.requests.get')
     def test_external_book_get(self, mock_get):
         mock_get.return_value.status_code = 200
-        factory = RequestFactory()
+        factory = APIRequestFactory()
         req = factory.get('api/external-books')
         resp = views.ExternalBook.as_view()(req)
         assert resp.status_code == 200, 'Should return list of books.'
@@ -46,6 +35,8 @@ class TestBookViewSet:
 
     @staticmethod
     def create_book(request_factory):
+        """Helper method to create book before tests."""
+
         req = request_factory.post('api/v1/books', {
             'name': 'test_from_test',
             'isbn': '123-456789012',
@@ -82,25 +73,28 @@ class TestBookViewSet:
         req = request_factory.get('api/v1/books')
         resp = views.BookViewSet.as_view({'get': 'retrieve'})(req, pk=1)
         assert resp.status_code == 200
-        assert resp.data['data'] == {"id": 1, "name": "test_from_test",
-                                     "isbn": "123-456789012", "country": "india",
-                                     "number_of_pages": 26, "publisher": "pub1",
-                                     "release_date": "2019-05-26", "authors": ["test1"]
+        assert resp.data['data'] == {'id': 1, 'name': 'test_from_test',
+                                     'isbn': '123-456789012', 'country': 'india',
+                                     'number_of_pages': 26, 'publisher': 'pub1',
+                                     'release_date': '2019-05-26', 'authors': ['test1']
                                      }
         resp = views.BookViewSet.as_view({'get': 'retrieve'})(req, pk=2)
         assert resp.status_code == 404
 
-    # def test_update(self, request_factory):
-    #     self.create_book(request_factory)
-    #     req = request_factory.patch('api/v1/books/1', {"name": "updated_name"}, format='json')
-    #     resp = views.BookViewSet.as_view({'patch': 'update'})(req, pk=1)
-    #     assert resp.status_code == 200
-    #     assert resp.data['message'] == "The book test_from_test was updated successfully."
+    def test_update(self, request_factory):
+        self.create_book(request_factory)
+        # following is giving fields required for update so using APIClient to test patch.
+        # resp = views.BookViewSet.as_view({'get': 'retrieve'})(req, pk=1)
+        client = APIClient()
+        resp = client.patch('/api/v1/books/1/', data={'name': 'updated_name'}, format='json')
+        assert resp.status_code == 200
+        assert resp.data['message'] == 'The book test_from_test was updated successfully.'
+        assert resp.data['data']['name'] == 'updated_name'
 
     def test_delete(self, request_factory):
         self.create_book(request_factory)
         req = request_factory.delete('api/v1/books')
         resp = views.BookViewSet.as_view({'delete': 'destroy'})(req, pk=1)
         assert resp.status_code == 200
-        assert resp.data['message'] == "The book test_from_test was deleted successfully."
+        assert resp.data['message'] == 'The book test_from_test was deleted successfully.'
         assert resp.data['data'] == []

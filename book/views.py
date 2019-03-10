@@ -6,16 +6,9 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK
 from rest_framework.views import APIView
 
+from book.constants import FIELDS_TO_EXCLUDE, STATUS_CODES
 from book.models import Book, Author
 from book.serializers import BookSerializer
-
-status = {
-    200: "success",
-    404: "not found",
-    201: "success",
-    500: "internal server error"
-}
-FIELDS_TO_EXCLUDE = ['url', 'mediaType', 'characters', 'povCharacters']
 
 
 class ExternalBook(APIView):
@@ -36,11 +29,11 @@ class ExternalBook(APIView):
         except ConnectionError:
             return Response({"error": "You are not connected to internet!"})
         except HTTPError as e:
-            return Response({'status_code': e.response.status_code, 'status': status[e.response.status_code]})
+            return Response({'status_code': e.response.status_code, 'status': STATUS_CODES[e.response.status_code]})
 
         self.customized_json_response(json_response)
         return Response({'status_code': response.status_code,
-                         'status': status[response.status_code],
+                         'status': STATUS_CODES[response.status_code],
                          'data': json_response})
 
 
@@ -60,7 +53,7 @@ class BookViewSet(viewsets.ModelViewSet):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         data = {"status_code": HTTP_201_CREATED,
-                "status": status[201],
+                "status": STATUS_CODES[201],
                 "data": [{"book": serializer.data}]
                 }
         return Response(data, status=HTTP_201_CREATED, headers=headers)
@@ -68,15 +61,16 @@ class BookViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         response = super().list(request, *args, **kwargs)
         return Response(data={"status_code": response.status_code,
-                              "status": status[response.status_code],
+                              "status": STATUS_CODES[response.status_code],
                               "data": response.data},
                         status=HTTP_200_OK)
 
     def update(self, request, *args, **kwargs):
+        book = self.get_object()
         response = super().update(request, *args, **kwargs)
         return Response(data={"status_code": response.status_code,
-                              "status": status[response.status_code],
-                              "message": "The book {} was updated successfully.".format(response.data["name"]),
+                              "status": STATUS_CODES[response.status_code],
+                              "message": "The book {} was updated successfully.".format(book.name),
                               "data": response.data
                               })
 
@@ -91,5 +85,5 @@ class BookViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         response = super().retrieve(request, *args, **kwargs)
         return Response(data={"status_code": response.status_code,
-                              "status": status[response.status_code],
+                              "status": STATUS_CODES[response.status_code],
                               "data": response.data})

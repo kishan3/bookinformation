@@ -4,6 +4,10 @@
 
 `./project_setup.sh`
 
+`source ./venv/bin/actiave`
+
+`pip install -r requirements.txt`
+
 ## Runserver
 
 `./runserver.sh`
