@@ -2,13 +2,15 @@
 
 ## Project setup
 
-1. `./project_setup.sh`
+1. `git clone https://github.com/kishan3/bookinformation.git` and `cd <project_directory>`
 
-2. `source ./venv/bin/actiave`
+2. `./project_setup.sh`
 
-3. `pip install -r requirements.txt`
+3. `source venv/bin/actiave`
 
-4. `./manage.py migrate`
+4. `pip install -r requirements.txt`
+
+5. `./manage.py migrate`
 
 ###### Note: After Installing pytest-django, pytest-cov, mixer 
 ###### it requires to deactivate and reactivate virtualenv to avoid errors..
