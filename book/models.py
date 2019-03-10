@@ -15,7 +15,7 @@ class Book(models.Model):
     authors = models.ManyToManyField(Author, verbose_name="Book's authors names.")
     number_of_pages = models.IntegerField(verbose_name="Number of pages in book.")
     publisher = models.CharField(max_length=256, verbose_name="Publisher of book.")
-    release_date = models.CharField(max_length=256, verbose_name="Release date of book.")
+    release_date = models.DateField(verbose_name="Release date of book.")
 
     def __str__(self):
         return self.name

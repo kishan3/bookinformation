@@ -1,4 +1,5 @@
 # Create your views here.
+import django_filters
 import requests
 from requests.exceptions import HTTPError, ConnectionError
 from rest_framework import viewsets
@@ -37,9 +38,19 @@ class ExternalBook(APIView):
                          'data': json_response})
 
 
+class BookFilter(django_filters.FilterSet):
+    release_date = django_filters.NumberFilter(field_name="release_date", lookup_expr='year')
+
+    class Meta:
+        model = Book
+        fields = ['name', 'country', 'publisher', 'release_date']
+
+
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
+    filter_class = BookFilter
 
     def create(self, request, *args, **kwargs):
         author_names = request.data.get('authors', [])
