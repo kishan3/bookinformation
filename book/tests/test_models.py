@@ -1,3 +1,5 @@
+import datetime
+
 import pytest
 from mixer.backend.django import mixer
 
@@ -25,7 +27,7 @@ class TestBook:
         assert book.country == "india"
         assert book.number_of_pages == 26
         assert book.publisher == "pub1"
-        assert book.release_date == "2019-05-26"
+        assert book.release_date == datetime.date(2019, 5, 26)
         assert book.authors.count() == 2
         assert book.authors.first().name == "author0"
         assert book.authors.last().name == "author1"

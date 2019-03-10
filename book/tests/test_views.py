@@ -68,6 +68,42 @@ class TestBookViewSet:
         assert resp.data['status'] == 'success'
         assert len(resp.data['data']) == 1
 
+    def test_list_filter_by_year(self, request_factory):
+        self.create_book(request_factory)
+        req = request_factory.get('api/v1/books', {'release_date': 2019})
+        resp = views.BookViewSet.as_view({'get': 'list'})(req)
+        assert len(resp.data['data']) == 1
+        req = request_factory.get('api/v1/books', {'release_date': 2018})
+        resp = views.BookViewSet.as_view({'get': 'list'})(req)
+        assert len(resp.data['data']) == 0
+
+    def test_list_filter_by_name(self, request_factory):
+        self.create_book(request_factory)
+        req = request_factory.get('api/v1/books', {'name': 'test_from_test'})
+        resp = views.BookViewSet.as_view({'get': 'list'})(req)
+        assert len(resp.data['data']) == 1
+        req = request_factory.get('api/v1/books', {'name': 'non existing book name'})
+        resp = views.BookViewSet.as_view({'get': 'list'})(req)
+        assert len(resp.data['data']) == 0
+
+    def test_list_filter_by_country(self, request_factory):
+        self.create_book(request_factory)
+        req = request_factory.get('api/v1/books', {'country': 'india'})
+        resp = views.BookViewSet.as_view({'get': 'list'})(req)
+        assert len(resp.data['data']) == 1
+        req = request_factory.get('api/v1/books', {'country': 'england'})
+        resp = views.BookViewSet.as_view({'get': 'list'})(req)
+        assert len(resp.data['data']) == 0
+
+    def test_list_filter_by_publisher(self, request_factory):
+        self.create_book(request_factory)
+        req = request_factory.get('api/v1/books', {'publisher': 'pub1'})
+        resp = views.BookViewSet.as_view({'get': 'list'})(req)
+        assert len(resp.data['data']) == 1
+        req = request_factory.get('api/v1/books', {'publisher': 'non existing publisher'})
+        resp = views.BookViewSet.as_view({'get': 'list'})(req)
+        assert len(resp.data['data']) == 0
+
     def test_retrieve(self, request_factory):
         self.create_book(request_factory)
         req = request_factory.get('api/v1/books')

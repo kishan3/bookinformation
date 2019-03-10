@@ -50,7 +50,7 @@ class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
-    filter_class = BookFilter
+    filterset_class = BookFilter
 
     def create(self, request, *args, **kwargs):
         author_names = request.data.get('authors', [])
