@@ -2,11 +2,19 @@
 
 ## Project setup
 
-`./project_setup.sh`
+1. `./project_setup.sh`
 
-`source ./venv/bin/actiave`
+2. `source ./venv/bin/actiave`
 
-`pip install -r requirements.txt`
+3. `pip install -r requirements.txt`
+
+4. `./manage.py migrate`
+
+###### Note: After Installing pytest-django, pytest-cov, mixer 
+###### it requires to deactivate and reactivate virtualenv to avoid errors..
+
+## Run Tests
+`py.test`
 
 ## Runserver
 
