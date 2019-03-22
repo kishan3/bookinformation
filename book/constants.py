@@ -1,3 +1,5 @@
+"""Constants moduel for book."""
+
 STATUS_CODES = {
     200: "success",
     404: "not found",
