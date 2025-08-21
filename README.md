@@ -1,4 +1,26 @@
-# A Rest API backend using Django Rest Framework
+# Book Information REST API Backend
+
+This project is a RESTful API backend for managing book and author information. It is built using Django and Django REST Framework. The API allows users to perform CRUD operations on books and authors, and also provides integration with the external "An API of Ice and Fire" to fetch book details.
+
+## Technical Stack
+
+- **Backend Framework:** Django 2.2
+- **API Framework:** Django REST Framework
+- **Database:** SQLite (default, can be changed)
+- **Filtering:** django-filter
+- **Testing:** pytest, pytest-django, pytest-cov, mixer
+- **Type Checking:** mypy, django-stubs
+- **Other Libraries:** Faker (for dummy data), requests (for external API calls)
+
+## Features
+
+- CRUD operations for books and authors
+- Many-to-many relationship between books and authors
+- Fetch book details from the "An API of Ice and Fire" external API
+- Filtering and searching capabilities
+- Automated tests and code coverage
+
+---
 
 ## Project setup
 
